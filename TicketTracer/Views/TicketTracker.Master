@@ -1,0 +1,50 @@
+﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <meta name="viewport" content="width=device-width" />
+    <%--<script src="../Scripts/jquery-2.0.3.min.js"></script>
+    <script src="../Scripts/knockout-3.0.0.js"></script>
+    <script src="../Scripts/json2.min.js"></script>
+    <link href="../Content/kendo/2013.3.1119/kendo.silver.min.css" rel="stylesheet" />
+    <link href="../Content/kendo/2013.3.1119/kendo.common.min.css" rel="stylesheet" />
+    <script src="../Scripts/kendo.web.min.js"></script>
+    <script src="../Scripts/kendo.culture.it-IT.min.js"></script>--%>
+    <%: Scripts.Render("~/bundles/jquery") %>
+    <%: Scripts.Render("~/bundles/KnockOut") %>
+    <%: Scripts.Render("~/bundles/Kendo") %>
+
+
+    <%: Styles.Render("~/Content/css") %>
+    <%: Styles.Render("~/Content/kendoStyle") %>
+    <%: Scripts.Render("~/bundles/modernizr") %>
+
+    <link href="../Content/themes/base/jquery-ui.css" rel="stylesheet" />
+
+    <title></title>
+    <asp:ContentPlaceHolder ID="head" runat="server" />
+</head>
+<body>
+    <div class="float-right">
+        <section id="login">
+            <%: Html.Partial("_login") %>
+        </section>
+        <nav>
+            <ul id="menu">
+                <li><%: Html.ActionLink("Home", "Index", "Home") %></li>
+                <% if (Request.IsAuthenticated && TicketTracer.Models.TTRepository.GetUserAdmin(HttpContext.Current.User.Identity.Name))
+                   { %>
+                <li><%: Html.ActionLink("Help Desk", "User", "Home") %></li>
+                <%} %>
+                <li><%: Html.ActionLink("Ticket", "Ticket", "Home") %></li>
+            </ul>
+        </nav>
+    </div>
+    <div>
+        <asp:ContentPlaceHolder ID="MainContent" runat="server">
+        </asp:ContentPlaceHolder>
+    </div>
+</body>
+</html>
