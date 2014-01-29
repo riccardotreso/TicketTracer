@@ -402,6 +402,7 @@
     <Content Include="Style\kendo.common.min.css" />
     <Content Include="Style\kendo.default.min.css" />
     <Content Include="Style\kendo.default.min_ori.css" />
+    <Content Include="utenze.txt" />
     <Content Include="Views\Account\Login.aspx" />
     <Content Include="Views\Account\Register.aspx" />
     <Content Include="Views\Shared\_login.ascx" />
