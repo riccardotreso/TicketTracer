@@ -20,7 +20,7 @@ Model = function () {
         self.Users.removeAll();
         $.getJSON("/api/user/", function (data) {
             $.each(data, function (index, value) {
-                self.Users.push(new User(value.Id, value.Name, value.Surname, value.NTLogin, value.Email, value.Enabled, value.Division, value.IsAdmin));
+                self.Users.push(new User(value.Id, value.Name, value.Surname, value.NTLogin, value.Email, value.Enabled, value.Division, value.IsAdmin, value.IsHelpDesk, value.Password));
             });
 
             $("#gridUtenti").kendoGrid({
@@ -66,6 +66,16 @@ Model = function () {
                     width: 104,
                     hidden: true,
                     title: "IsAdmin"
+                }, {
+                    field: "IsHelpDesk()",
+                    width: 104,
+                    hidden: true,
+                    title: "IsHelpDesk"
+                }, {
+                    field: "Password()",
+                    width: 104,
+                    hidden: true,
+                    title: "Password"
                 }]
             });
 
@@ -76,8 +86,12 @@ Model = function () {
         });
     };
 
+    self.resetPassword = function () {
+        alert("metodo non implementato");
+    }
+
     self.clearUser = function () {
-        self.currentUser(new User("", "", "", "", "", false, "", false));
+        self.currentUser(new User("", "", "", "", "", false, "", false, false, ""));
     }
 
     self.addUser = function () {
@@ -133,7 +147,9 @@ Model = function () {
                     selectedItem.Email(),
                     selectedItem.Enabled(),
                     selectedItem.Division(),
-                    selectedItem.IsAdmin()));
+                    selectedItem.IsAdmin(),
+                    selectedItem.IsHelpDesk(),
+                    selectedItem.Password()));
             }
         }
     }
@@ -141,7 +157,7 @@ Model = function () {
 
 
 
-User = function (Id, Name, Surname, NTLogin, Email, Enabled, Division, IsAdmin) {
+User = function (Id, Name, Surname, NTLogin, Email, Enabled, Division, IsAdmin, IsHelpDesk, Password) {
     var self = this;
 
     self.Id = ko.observable(Id);
@@ -152,6 +168,8 @@ User = function (Id, Name, Surname, NTLogin, Email, Enabled, Division, IsAdmin) 
     self.Enabled = ko.observable(Enabled);
     self.Division = ko.observable(Division);
     self.IsAdmin = ko.observable(IsAdmin);
+    self.IsHelpDesk = ko.observable(IsHelpDesk);
+    self.Password = ko.observable(Password);
 
 };
 

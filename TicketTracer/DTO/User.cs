@@ -17,6 +17,9 @@ namespace TicketTracer.DTO
         public string Division { get; set; }
         public bool IsAdmin { get; set; }
 
+        public bool IsHelpDesk { get; set; }
+        public string Password { get; set; }
+
         public string FullName()
         {
             return Name + " " + Surname;

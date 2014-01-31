@@ -36,7 +36,7 @@
                 <li><%: Html.ActionLink("Home", "Index", "Home") %></li>
                 <% if (Request.IsAuthenticated && TicketTracer.Models.TTRepository.GetUserAdmin(HttpContext.Current.User.Identity.Name))
                    { %>
-                <li><%: Html.ActionLink("Help Desk", "User", "Home") %></li>
+                <li><%: Html.ActionLink("Gestione utenti", "User", "Home") %></li>
                 <%} %>
                 <li><%: Html.ActionLink("Ticket", "Ticket", "Home") %></li>
             </ul>

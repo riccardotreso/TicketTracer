@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using TicketTracer.DTO;
 using TicketTracer.Models;
+using TicketTracer.Util;
 
 namespace TicketTracer.Controllers
 {
@@ -26,6 +27,7 @@ namespace TicketTracer.Controllers
         // POST api/user
         public void Post(TicketTracer.DTO.User value)
         {
+            value.Password = CryptographyHelper.Encrypt(value.Password);
             TTRepository.InsertUser(value);
         }
 

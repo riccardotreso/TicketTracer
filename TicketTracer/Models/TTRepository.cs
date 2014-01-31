@@ -39,6 +39,21 @@ namespace TicketTracer.Models
 
         }
 
+        
+
+        internal static User GetUserByMail(string Email)
+        {
+            IMongoQuery query = Query.EQ("Email", Email);
+
+            var contextDB = MongoDBHelper.GetContext(ConnectionString, DB);
+            var list = MongoDBHelper.GetCollection<User>(contextDB, UserCollection, query, Fields.Null);
+            if (list != null)
+                return list.FirstOrDefault();
+            else
+                return null;
+
+        }
+
         public static bool GetUserAdmin(string username)
         {
             if (string.IsNullOrEmpty(username)) return false;

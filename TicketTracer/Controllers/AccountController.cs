@@ -4,8 +4,10 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using TicketTracer.DTO;
 using TicketTracer.Filters;
 using TicketTracer.Models;
+using TicketTracer.Util;
 using WebMatrix.WebData;
 
 namespace TicketTracer.Controllers
@@ -14,6 +16,9 @@ namespace TicketTracer.Controllers
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
+
+        
+
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
@@ -31,7 +36,7 @@ namespace TicketTracer.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            WebSecurity.Logout();
+            SecurityHelper.Logout();
 
             return RedirectToAction("Index", "Home");
         }
@@ -46,8 +51,11 @@ namespace TicketTracer.Controllers
                 // Attempt to register the user
                 try
                 {
-                    WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
-                    WebSecurity.Login(model.UserName, model.Password);
+                    SecurityHelper.CreateUserAndAccount(model);
+                    SecurityHelper.Login(model.UserName, model.Password);
+
+                    //WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
+                    //WebSecurity.Login(model.UserName, model.Password);
                     return RedirectToAction("Index", "Home");
                 }
                 catch (MembershipCreateUserException e)
@@ -60,13 +68,15 @@ namespace TicketTracer.Controllers
             return View(model);
         }
 
+        
+
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model, string returnUrl)
         {
-            if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
+            if (ModelState.IsValid && SecurityHelper.Login(model.UserName, model.Password))
             {
                 return RedirectToLocal(returnUrl);
             }
@@ -87,6 +97,8 @@ namespace TicketTracer.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+
+        
 
 
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)

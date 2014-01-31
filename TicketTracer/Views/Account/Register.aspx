@@ -18,6 +18,22 @@
         <legend>Registration Form</legend>
         <ol>
             <li>
+                <%: Html.LabelFor(m => m.Name) %>
+                <%: Html.TextBoxFor(m => m.Name) %>
+            </li>
+            <li>
+                <%: Html.LabelFor(m => m.Surname) %>
+                <%: Html.TextBoxFor(m => m.Surname) %>
+            </li>
+            <li>
+                <%: Html.LabelFor(m => m.Division) %>
+                <%: Html.TextBoxFor(m => m.Division) %>
+            </li>
+            <li>
+                <%: Html.LabelFor(m => m.Email) %>
+                <%: Html.TextBoxFor(m => m.Email) %>
+            </li>
+            <li>
                 <%: Html.LabelFor(m => m.UserName) %>
                 <%: Html.TextBoxFor(m => m.UserName) %>
             </li>
