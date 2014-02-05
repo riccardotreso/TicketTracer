@@ -12,6 +12,7 @@
     <link href="../Content/kendo/2013.3.1119/kendo.common.min.css" rel="stylesheet" />
     <script src="../Scripts/kendo.web.min.js"></script>
     <script src="../Scripts/kendo.culture.it-IT.min.js"></script>--%>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu" />
     <%: Scripts.Render("~/bundles/jquery") %>
     <%: Scripts.Render("~/bundles/KnockOut") %>
     <%: Scripts.Render("~/bundles/Kendo") %>
@@ -23,26 +24,41 @@
 
     <link href="../Content/themes/base/jquery-ui.css" rel="stylesheet" />
 
+
     <title></title>
     <asp:ContentPlaceHolder ID="head" runat="server" />
 </head>
 <body>
-    <div class="float-right">
-        <section id="login">
-            <%: Html.Partial("_login") %>
-        </section>
+    <div class="contentMenu">
         <nav>
-            <ul id="menu">
-                <li><%: Html.ActionLink("Home", "Index", "Home") %></li>
+            <ul class="menu">
+                <li>
+                    <a href='<%: Url.Action("Index", "Home") %>'>
+                        <div class="widget center icon star"></div>
+                        <span class="label">Home</span>
+                    </a>
+                </li>
                 <% if (Request.IsAuthenticated && TicketTracer.Models.TTRepository.GetUserAdmin(HttpContext.Current.User.Identity.Name))
                    { %>
-                <li><%: Html.ActionLink("Gestione utenti", "User", "Home") %></li>
+                <li>
+                    <a href='<%: Url.Action("User", "Home") %>'>
+                        <div class="widget center icon user"></div>
+                        <span class="label">Gestione utenti</span>
+                    </a>
+                </li>
                 <%} %>
-                <li><%: Html.ActionLink("Ticket", "Ticket", "Home") %></li>
+                <li>
+                    <a href='<%: Url.Action("Ticket", "Home") %>'>
+                        <div class="widget center icon eye"></div>
+                        <span class="label">Ticket</span>
+                        <div class="widget indicator"><span class="indicatorNumber">5</span></div>
+                    </a>
+                </li>
             </ul>
+            <%: Html.Partial("_login") %>
         </nav>
     </div>
-    <div>
+    <div class="content">
         <asp:ContentPlaceHolder ID="MainContent" runat="server">
         </asp:ContentPlaceHolder>
     </div>

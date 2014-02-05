@@ -1,0 +1,128 @@
+﻿.content
+{
+    clear:both;
+}
+
+.contentMenu
+{
+    background-image: url(images/background.gif);
+    background-repeat: repeat-x;
+    height: 80px;
+}
+
+.menu
+{
+    margin-left: -40px;
+    margin-top: -14px;
+}
+
+    .menu li
+    {
+        background-image: url(images/background.gif);
+        width: 300px;
+        height: 80px;
+        background-repeat: repeat-x;
+        color: white;
+        cursor: pointer;
+        text-decoration: none;
+        list-style: none;
+        float: left;
+    }
+
+        .menu li:hover
+        {
+            background-image: url(images/hover.png);
+            width: 300px;
+            height: 80px;
+            background-repeat: repeat-x;
+            color: white;
+            cursor: pointer;
+        }
+
+.widget
+{
+    background-image: url(images/sprite_2.gif);
+}
+
+.center
+{
+    top: 33%;
+    left: 8%;
+    position: relative;
+}
+
+.indicator
+{
+    width: 22px;
+    height: 22px;
+    background-position: -209px -28px;
+    top: 16%;
+    position: relative;
+    float: left;
+}
+
+.indicatorNumber
+{
+    top: 1px;
+    position: relative;
+    font-size: 10pt;
+    font-weight: bold;
+    left: 7px;
+    color:white;
+    font-family: Ubuntu;
+}
+
+.icon
+{
+    width: 25px;
+    height: 25px;
+    float: left;
+}
+
+.star
+{
+    background-position: -121px -24px;
+}
+
+.user
+{
+    background-position: -48px -24px;
+}
+
+.mail
+{
+    background-position: -84px -24px;
+}
+
+.comment
+{
+    background-position: -283px -28px;
+}
+
+.setting
+{
+    background-position: -17px -23px;
+}
+
+.eye
+{
+    background-position: -248px -28px;
+}
+
+.label
+{
+    top: 25%;
+    position: relative;
+    float: left;
+    margin-left: 10%;
+    margin-right: 10px;
+    font-family: Ubuntu;
+    font-size: 28px;
+    color: white;
+}
+.welcome
+{
+    line-height:75px;
+}
+
+

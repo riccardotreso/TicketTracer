@@ -32,7 +32,8 @@ namespace TicketTracer
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
-            bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/site.css"));
+            bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/site.css",
+                                                                "~/Content/custom.css"));
 
             bundles.Add(new StyleBundle("~/Content/kendoStyle").Include(
                         "~/Content/kendo/2013.3.1119/kendo.silver.min.css",
