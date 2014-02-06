@@ -56,6 +56,13 @@ namespace TicketTracer.Util
             return result.Ok;
         }
 
+        public static bool Modify(MongoDatabase contextDB,string collectionName, IMongoQuery query, IMongoUpdate Update, UpdateFlags flag)
+        {
+            var result = contextDB.GetCollection(collectionName).Update(query, Update, flag);
+
+            return result.Ok;
+        }
+
 
         public static bool Delete(MongoDatabase contextDB, string collectionName, string ID)
         {

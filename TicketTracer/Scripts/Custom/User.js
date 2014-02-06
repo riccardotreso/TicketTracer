@@ -6,7 +6,7 @@ $(document).ready(function () {
     var model = new Model();
     model.LoadUsers();
 
-    ko.applyBindings(model);
+    ko.applyBindings(model, document.getElementById("divMainContent"));
 
 
 });
@@ -18,7 +18,7 @@ Model = function () {
 
     self.LoadUsers = function () {
         self.Users.removeAll();
-        $.getJSON("/api/user/", function (data) {
+        $.getJSON("/api/user?isHelpDesk=false", function (data) {
             $.each(data, function (index, value) {
                 self.Users.push(new User(value.Id, value.Name, value.Surname, value.NTLogin, value.Email, value.Enabled, value.Division, value.IsAdmin, value.IsHelpDesk, value.Password));
             });

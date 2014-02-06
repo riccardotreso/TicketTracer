@@ -33,7 +33,8 @@ namespace TicketTracer.Controllers
         // PUT api/ticket/5
         public void Put(string id, TicketTracer.DTO.Ticket value)
         {
-            TTRepository.UpdatetTicket(id, value);
+            string username = User.Identity.Name;
+            TTRepository.UpdatetTicket(id, value, username);
         }
 
         // DELETE api/ticket/5

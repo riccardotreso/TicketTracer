@@ -13,9 +13,10 @@ namespace TicketTracer.Controllers
     public class UserController : ApiController
     {
         // GET api/user
-        public IEnumerable<TicketTracer.DTO.User> Get()
+        public IEnumerable<TicketTracer.DTO.User> Get(bool isHelpDesk)
         {
-            return TTRepository.GetAllUser();
+
+            return TTRepository.GetAllUser(isHelpDesk);
         }
 
         // GET api/user/5

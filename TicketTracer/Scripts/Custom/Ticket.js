@@ -22,7 +22,8 @@ $(document).ready(function () {
     VModel.LoadTicket();
     VModel.LoadUser();
 
-    ko.applyBindings(VModel);
+    ko.applyBindings(VModel, document.getElementById("divMainContent"));
+    ko.applyBindings(VModel, document.getElementById("divComments"));
 
 });
 
@@ -36,7 +37,7 @@ Model = function () {
     self.LoadUser = function () {
         self.AvailableUser.removeAll();
         self.AvailableUser.push(new User("", "", "", "-1", "", "", "", ""));
-        $.getJSON("/api/user/", function (data) {
+        $.getJSON("/api/user?isHelpDesk=true", function (data) {
             $.each(data, function (index, value) {
                 self.AvailableUser.push(new User(value.Id, value.Name, value.Surname, value.NTLogin, value.Email, value.Enabled, value.Division, value.IsAdmin));
             });
@@ -47,7 +48,7 @@ Model = function () {
 
     self.LoadTicket = function () {
         self.Tickets.removeAll();
-        $.getJSON("/api/ticket?user=user", function (data) {
+        $.getJSON("/api/ticket", function (data) {
             $.each(data, function (index, value) {
                 self.Tickets.push(new Ticket(value.Id, value.Title, value.Description, value.DateCreation, value.SubmittedBy, value.SubmittedEmail, value.DateClosed, value.Closed, value.AssignedUser, value.Comments));
             });
@@ -160,6 +161,14 @@ Model = function () {
         });
     }
 
+    self.readTicket = function () {
+        $.ajax({
+            url: "/api/notify?id=" + self.currentTicket().Id(),
+            type: 'put',
+            contentType: 'application/json'
+        });
+    }
+
     self.deleteTicket = function () {
         $.ajax({
             url: "/api/ticket?id=" + self.currentTicket().Id(),
@@ -204,6 +213,8 @@ Model = function () {
                     selectedItem.AssignedUser(),
                     []));
 
+
+                self.readTicket();
                 LoadComments(self.currentTicket());
 
                 $("#divComments").dialog("open");

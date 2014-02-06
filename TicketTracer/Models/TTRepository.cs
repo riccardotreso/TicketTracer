@@ -18,16 +18,23 @@ namespace TicketTracer.Models
         private static string UserCollection = "User";
         private static string TicketCollection = "Ticket";
 
-        internal static IEnumerable<User> GetAllUser()
+        internal static IEnumerable<User> GetAllUser(bool isHelpDesk)
         {
             var contextDB = MongoDBHelper.GetContext(ConnectionString, DB);
-            return MongoDBHelper.GetCollection<User>(contextDB, UserCollection, Query.Null, Fields.Null);
+            IMongoQuery query;
+            if (isHelpDesk)
+                query = Query.EQ("IsHelpDesk", true);
+            else
+                query = Query.Null;
+
+            return MongoDBHelper.GetCollection<User>(contextDB, UserCollection, query, Fields.Null);
 
         }
 
 
         internal static User GetUser(string username)
         {
+            if (string.IsNullOrEmpty(username)) return null;
             IMongoQuery query = Query.EQ("NTLogin", username);
 
             var contextDB = MongoDBHelper.GetContext(ConnectionString, DB);
@@ -67,7 +74,8 @@ namespace TicketTracer.Models
             if (string.IsNullOrEmpty(username)) return false;
 
             var objUser = GetUser(username);
-            return (objUser != null);
+            if (objUser == null) return false;
+            return (objUser.IsHelpDesk);
         }
 
         internal static string InsertUser(User entity)
@@ -88,7 +96,8 @@ namespace TicketTracer.Models
                 .Set("Email", value.Email)
                 .Set("Enabled", value.Enabled)
                 .Set("Division", value.Division)
-                .Set("IsAdmin", value.IsAdmin);
+                .Set("IsAdmin", value.IsAdmin)
+                .Set("IsHelpDesk", value.IsAdmin);
 
             return MongoDBHelper.Modify(contextDB, UserCollection, id, update);
         }
@@ -109,7 +118,7 @@ namespace TicketTracer.Models
                 query = Query.Null;
             else
             {
-                if (objUser == null)
+                if (!objUser.IsHelpDesk)
                     query = Query.EQ("SubmittedBy", user);
                 else
                     query = Query.EQ("AssignedUser", user);
@@ -126,9 +135,10 @@ namespace TicketTracer.Models
             return MongoDBHelper.Insert<Ticket>(contextDB, TicketCollection, value);
         }
 
-        internal static bool UpdatetTicket(string id, Ticket value)
+        internal static bool UpdatetTicket(string id, Ticket value, string username)
         {
             var contextDB = MongoDBHelper.GetContext(ConnectionString, DB);
+            var objUser = GetUser(username);
 
             //var listComments = (from comm in value.Comments
             //                    //where string.IsNullOrEmpty(comm.Id)
@@ -139,13 +149,28 @@ namespace TicketTracer.Models
             //                    { "InsertBy", comm.InsertBy },
             //                    { "Text", comm.Text }
             //                    }).ToArray();
+            IMongoUpdate update;
+            if (objUser.IsAdmin)
+            {
+                update = Update
+                   .Set("AssignedUser", value.AssignedUser)
+                   .Set("Closed", value.Closed)
+                   .Set("DateClosed", value.DateClosed)
+                   .Set("Description", value.Description)
+                   .Set("Title", value.Title)
+                   .Set("IsRead", false);
+            }
+            else
+            {
+                update = Update
+                        .Set("AssignedUser", value.AssignedUser)
+                        .Set("Closed", value.Closed)
+                        .Set("DateClosed", value.DateClosed)
+                        .Set("Description", value.Description)
+                        .Set("Title", value.Title);
+            }
 
-            IMongoUpdate update = Update
-                .Set("AssignedUser", value.AssignedUser)
-                .Set("Closed", value.Closed)
-                .Set("DateClosed", value.DateClosed)
-                .Set("Description", value.Description)
-                .Set("Title", value.Title);
+            
 
             return MongoDBHelper.Modify(contextDB, TicketCollection, id, update);
         }
@@ -161,7 +186,8 @@ namespace TicketTracer.Models
                 { "Title", value.Title },
                 { "DateCreation", value.DateCreation },
                 { "InsertBy", value.InsertBy },
-                { "Text", value.Text }
+                { "Text", value.Text }, 
+                { "IsRead", value.IsRead }, 
             };
 
             IMongoUpdate update = Update.Push("Comments", insComm);
@@ -187,6 +213,174 @@ namespace TicketTracer.Models
         {
             var contextDB = MongoDBHelper.GetContext(ConnectionString, DB);
             return MongoDBHelper.Delete(contextDB, TicketCollection, id);
+        }
+
+        internal static Notify GetNotifyByUser(string username)
+        {
+            if (string.IsNullOrEmpty(username)) return null;
+            var user = TTRepository.GetUser(username);
+            if(user == null) return null;
+
+            var contextDB = MongoDBHelper.GetContext(ConnectionString, DB);
+            IMongoQuery query;
+
+            if (user.IsAdmin) //controllo se l'utente è ADMIN in questo caso devo estrarre tutti i nuovi ticket inseriti dagli utenti e non ancora gestiti
+            {
+                query = Query.And(
+                    Query.EQ("IsRead", false),
+                    Query.NE("SubmittedBy", username));
+
+            }
+            else
+            {
+                if (user.IsHelpDesk) //se help desk, tutti i nuovi assegnati e i commenti nuovi
+                {
+                    query = Query.Or(
+                                Query.And(
+                                    Query.EQ("IsRead", false),
+                                    Query.EQ("AssignedUser", username),
+                                    Query.NE("SubmittedBy", username)),
+                                Query.And(
+                                    Query.EQ("AssignedUser", username),
+                                    Query.Not(Query.Size("Comments", 0)),
+                                    Query.ElemMatch("Comments", Query.And(
+                                                   Query.EQ("IsRead", false),
+                                                   Query.NE("InsertBy", username)
+                                                )))
+                                    );
+
+                }
+                else//se user solo i nuovi commenti
+                {
+                    query = Query.And(
+                        Query.EQ("SubmittedBy", username)
+                        , Query.Not(Query.Size("Comments", 0))
+                        , Query.ElemMatch("Comments", Query.And(
+                                                            Query.EQ("IsRead", false),
+                                                            Query.NE("InsertBy", username)
+                                                            )
+                                            ));
+ 
+                }
+            }
+
+            var Listticket = MongoDBHelper.GetCollection<Ticket>(contextDB, TicketCollection, query, Fields.Null);
+            if (Listticket == null)
+                return null;
+            else
+            {
+                var objNotify = new Notify();
+                if (user.IsAdmin)
+                {
+                    objNotify.NumberTickets = Listticket.Count();
+                    objNotify.NumberComments = 0;
+                }
+                else
+                {
+                    if (user.IsHelpDesk)
+                    {
+                        objNotify.NumberTickets = (from l in Listticket
+                                                   where l.IsRead == false
+                                                   && l.AssignedUser == user.NTLogin
+                                                   && l.SubmittedBy != user.NTLogin
+                                                   select l).Count();
+
+                        objNotify.NumberComments = (from l in Listticket
+                                                    where l.IsRead == false
+                                                    && l.AssignedUser == user.NTLogin
+                                                    && l.Comments.Where(x => x.IsRead == false && x.InsertBy != user.NTLogin).Count() > 0
+                                                    select l).Count();
+                    }
+                    else
+                    {
+                        objNotify.NumberComments = (from l in Listticket
+                                                    where l.SubmittedBy == user.NTLogin
+                                                    && l.Comments.Where(x => x.IsRead == false && x.InsertBy != user.NTLogin).Count() > 0
+                                                    select l).Count();
+                        objNotify.NumberTickets = 0;
+
+                    }
+                }
+                return objNotify;
+
+            }
+
+            
+        }
+
+        internal static void SetReadTicket(string idTicket, string username)
+        {
+
+            if (string.IsNullOrEmpty(username)) return;
+            var user = TTRepository.GetUser(username);
+            if (user == null) return;
+
+            var contextDB = MongoDBHelper.GetContext(ConnectionString, DB);
+            IMongoUpdate update;
+            IMongoQuery query = Query.Null;
+
+            if (user.IsAdmin)
+            {
+                query = Query.And(
+                    Query.EQ("_id", new BsonObjectId(new ObjectId(idTicket))),
+                    Query.EQ("IsRead", false),
+                    Query.NE("SubmittedBy", username));
+
+                update = Update
+                    .Set("IsRead", true);
+
+                MongoDBHelper.Modify(contextDB, TicketCollection, query, update, UpdateFlags.Multi);
+            }
+            else
+            {
+                if (user.IsHelpDesk)
+                {
+                    query = Query.And(
+                                Query.EQ("_id", new BsonObjectId(new ObjectId(idTicket))),
+                                Query.EQ("AssignedUser", username),
+                                Query.Not(Query.Size("Comments", 0)),
+                                Query.ElemMatch("Comments", Query.And(
+                                                Query.EQ("IsRead", false),
+                                                Query.NE("InsertBy", username)
+                                            ))
+                                );
+
+                    update = Update
+                        .Set("Comments.$.IsRead", true);
+
+                    MongoDBHelper.Modify(contextDB, TicketCollection, query, update, UpdateFlags.Multi);
+
+
+                    update = Update
+                        .Set("IsRead", true);
+
+                    query = Query.And(
+                                   Query.EQ("_id", new BsonObjectId(new ObjectId(idTicket))),
+                                   Query.EQ("IsRead", false),
+                                   Query.EQ("AssignedUser", username),
+                                   Query.NE("SubmittedBy", username));
+
+                    MongoDBHelper.Modify(contextDB, TicketCollection, query, update, UpdateFlags.Multi);
+
+                }
+                else
+                {
+                    query = Query.And(
+                        Query.EQ("_id", new BsonObjectId(new ObjectId(idTicket))),
+                        Query.ElemMatch("Comments", Query.And(
+                                                            Query.EQ("IsRead", false),
+                                                            Query.NE("InsertBy", username)
+                                                            ))
+                        );
+
+                    update = Update
+                        .Set("Comments.$.IsRead", true);
+
+                    MongoDBHelper.Modify(contextDB, TicketCollection, query, update, UpdateFlags.Multi);
+                }
+            }
+
+            
         }
     }
 }

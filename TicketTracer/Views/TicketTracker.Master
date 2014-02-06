@@ -23,13 +23,13 @@
     <%: Scripts.Render("~/bundles/modernizr") %>
 
     <link href="../Content/themes/base/jquery-ui.css" rel="stylesheet" />
-
+    <script src="../Scripts/Custom/Master.js"></script>
 
     <title></title>
     <asp:ContentPlaceHolder ID="head" runat="server" />
 </head>
 <body>
-    <div class="contentMenu">
+    <div class="contentMenu" id="divContentMenu">
         <nav>
             <ul class="menu">
                 <li>
@@ -51,14 +51,14 @@
                     <a href='<%: Url.Action("Ticket", "Home") %>'>
                         <div class="widget center icon eye"></div>
                         <span class="label">Ticket</span>
-                        <div class="widget indicator"><span class="indicatorNumber">5</span></div>
+                        <div data-bind="visible: Notify().HasNotify" class="widget indicator"><span data-bind="text: Notify().NumNotify" class="indicatorNumber">5</span></div>
                     </a>
                 </li>
             </ul>
             <%: Html.Partial("_login") %>
         </nav>
     </div>
-    <div class="content">
+    <div class="content" id="divMainContent">
         <asp:ContentPlaceHolder ID="MainContent" runat="server">
         </asp:ContentPlaceHolder>
     </div>

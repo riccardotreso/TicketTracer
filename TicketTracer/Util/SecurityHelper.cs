@@ -11,7 +11,7 @@ namespace TicketTracer.Util
 {
     public class SecurityHelper
     {
-        
+
         private static string cookieName = "TicketTracesCookie";
 
 

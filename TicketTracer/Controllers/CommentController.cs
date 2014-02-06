@@ -32,8 +32,9 @@ namespace TicketTracer.Controllers
         }
 
         // PUT api/comment/5
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, Comment value)
         {
+            
         }
 
         // DELETE api/comment/5

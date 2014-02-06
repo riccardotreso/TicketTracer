@@ -17,6 +17,7 @@ namespace TicketTracer.DTO
         public string AssignedUser { get; set; }
         public string SubmittedBy { get; set; }
         public string SubmittedEmail { get; set; }
+        public bool IsRead { get; set; }
         public IEnumerable<Comment> Comments { get; set; }
     }
 
@@ -26,6 +27,14 @@ namespace TicketTracer.DTO
         public string Text { get; set; }
         public DateTime DateCreation { get; set; }
         public string InsertBy { get; set; }
+        public bool IsRead { get; set; }
 
+
+    }
+
+    public class Notify
+    {
+        public int NumberTickets { get; set; }
+        public int NumberComments { get; set; } 
     }
 }
