@@ -1,6 +1,6 @@
 ﻿.content
 {
-    clear:both;
+    clear: both;
 }
 
 .contentMenu
@@ -27,6 +27,11 @@
         text-decoration: none;
         list-style: none;
         float: left;
+        -webkit-transition: all 0.2s;
+        -moz-transition: all 0.2s;
+        -ms-transition: all 0.2s;
+        -o-transition: all 0.2s;
+        transition: all 0.2s;
     }
 
         .menu li:hover
@@ -39,6 +44,48 @@
             cursor: pointer;
         }
 
+        /*submenu*/
+        .menu li ul
+        {
+            padding: 0;
+            position: absolute;
+            top: 80px;
+            
+            width: 300px;
+            -webkit-box-shadow: none;
+            -moz-box-shadow: none;
+            box-shadow: none;
+            display: none;
+            opacity: 0;
+            visibility: hidden;
+            -webkit-transiton: opacity 0.2s;
+            -moz-transition: opacity 0.2s;
+            -ms-transition: opacity 0.2s;
+            -o-transition: opacity 0.2s;
+            -transition: opacity 0.2s;
+        }
+
+            .menu li ul li
+            {
+                margin-top:-1px;
+                background-image: url(images/background.gif);
+                display: block;
+                
+            }
+
+                .menu li ul li:hover
+                {
+                    background-image: url(images/hover2.png);
+                }
+
+        .menu li:hover ul
+        {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+        /*submenu*/
+
 .widget
 {
     background-image: url(images/sprite_2.gif);
@@ -46,7 +93,7 @@
 
 .center
 {
-    top: 33%;
+    top: 35%;
     left: 8%;
     position: relative;
 }
@@ -68,7 +115,7 @@
     font-size: 10pt;
     font-weight: bold;
     left: 7px;
-    color:white;
+    color: white;
     font-family: Ubuntu;
 }
 
@@ -109,6 +156,11 @@
     background-position: -248px -28px;
 }
 
+.arrow
+{
+    background-position: -311px -27px;
+}
+
 .label
 {
     top: 25%;
@@ -120,9 +172,8 @@
     font-size: 28px;
     color: white;
 }
+
 .welcome
 {
-    line-height:75px;
+    /*line-height: 75px;*/
 }
-
-

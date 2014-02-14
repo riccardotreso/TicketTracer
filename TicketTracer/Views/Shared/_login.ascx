@@ -2,16 +2,28 @@
 <% if (Request.IsAuthenticated)
    { %>
 
-<span class="label welcome">Hello, <%: HttpContext.Current.User.Identity.Name %>!</span>
-<% using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
-   { %>
-<%: Html.AntiForgeryToken() %>
+
+
 <ul class="menu">
     <li>
-        <a href="javascript:document.getElementById('logoutForm').submit()"><span class="label">Log Off</span></a>
+        <div class="widget center icon arrow"></div>
+        <span class="label welcome"><%: HttpContext.Current.User.Identity.Name %></span>
+        <ul>
+            <li>
+                <div class="widget center icon setting"></div>
+                <span class="label">Settings</span>
+            </li>
+            <li>
+                <% using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                   { %>
+                <%: Html.AntiForgeryToken() %>
+                <a href="javascript:document.getElementById('logoutForm').submit()"><span class="label">Log Off</span></a>
+                <% } %>
+            </li>
+        </ul>
     </li>
+    
 </ul>
-<% } %>
 <% }
    else
    { %>

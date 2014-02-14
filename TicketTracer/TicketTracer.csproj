@@ -167,6 +167,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="Content\images\background.gif" />
     <Content Include="Content\images\hover.png" />
+    <Content Include="Content\images\hover2.png" />
     <Content Include="Content\images\sprite_2.gif" />
     <Content Include="Content\kendo\2013.3.1119\Black\editor.png" />
     <Content Include="Content\kendo\2013.3.1119\Black\imagebrowser.png" />
